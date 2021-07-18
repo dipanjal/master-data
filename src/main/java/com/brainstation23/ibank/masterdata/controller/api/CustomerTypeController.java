@@ -1,6 +1,5 @@
 package com.brainstation23.ibank.masterdata.controller.api;
 
-import com.brainstation23.ibank.masterdata.controller.ApiTags;
 import com.brainstation23.ibank.masterdata.core.domain.BankResponse;
 import com.brainstation23.ibank.masterdata.domain.CustomerTypeResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +24,6 @@ public interface CustomerTypeController {
             description = "Fetch all Active Customer Types",
             summary = "fetchAllActiveCustomerTypes")
     ResponseEntity<BankResponse<List<CustomerTypeResponse>>> fetchAllActiveCustomerTypes();
-
 
     @GetMapping("/customer-type/by-code/{code}")
     @Operation(

@@ -1,7 +1,5 @@
 = Mock Server
 
-//:stylesheet: asciidoctor.css
-
 :toc:
 
 :Author:    Dipanjal Maitra
@@ -11,10 +9,7 @@
 - Author : mailto:{email}[{author}]
 - Version : {version-label}
 
-
-//image::assets/Front-End_Mock.png[als="mock server", 600, 300]
 image::assets/client_server.png[als="mock server"]
-
 
 == What is Mock Server ?
 ----
