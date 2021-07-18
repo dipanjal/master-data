@@ -1,0 +1,16 @@
+server:
+  port: 8100
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: master-data
+
+api:
+  version: 0.0.1
+
+springdoc:
+  paths-to-exclude:
+    - /user/**
+    - /dummy/**

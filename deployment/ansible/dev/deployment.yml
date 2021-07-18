@@ -1,0 +1,113 @@
+---
+- name: Master Data API deployment
+  hosts: '{{host}}'
+  gather_facts: no
+
+#  remote_user: user
+#  become: yes
+#  become_method: sudo
+  vars:
+      app_base_path: "~/remittance/"
+      app_name: "master-data"
+      app_directory: "{{app_base_path}}/{{app_name}}"
+      app_archive_path: "{{app_base_path}}/{{app_name}}/archive"
+      log_file_path: "{{app_directory}}/{{app_name}}.log"
+      temp_jar_path: "{{app_directory}}/{{app_name}}_tmp.jar"
+      jar_path: "{{app_directory}}/{{app_name}}.jar"
+      local_jar_file: "/home/ansible/bs23/city/Remittance/master-data/build/libs/master-data-0.0.1-SNAPSHOT.jar"
+
+##################################### Init [Create Directory if Not Present] ###################################
+
+  tasks:
+    - name: Create App Directory
+      tags: deploy
+      file:
+        path: "{{app_directory}}"
+        state: directory
+        mode: 0755
+
+##################################### App Archiving ###################################
+
+    - name: Create Archive Directory
+      tags: archive
+      file:
+        path: "{{app_archive_path}}"
+        state: directory
+        mode: 0755
+      when: backup | bool
+
+    - name: Get timestamp from the system
+      tags: archive
+      shell: "date +%Y-%m-%d%H:%M:%S"
+      register: tstamp
+      when: backup | bool
+
+    - tags: archive
+      set_fact:
+        cur_date: "{{ tstamp.stdout[0:10]}}"
+        cur_time: "{{ tstamp.stdout[10:]}}"
+      when: backup | bool
+
+    - tags: archive
+      stat:
+        path: "{{jar_path}}"
+      register: check_jar
+
+    - name: Backup Previous Build
+      tags: archive
+      copy:
+        src: "{{app_directory}}/{{app_name}}.jar"
+        dest: "{{app_archive_path}}/{{app_name}}_{{cur_date}}:{{cur_time}}.jar"
+        remote_src: true
+      when: backup and check_jar.stat.exists | bool
+
+##################################### App Deployment ###################################
+
+    - name: "Transfer Temp JAR to Remote"
+      tags: deploy
+      copy:
+        src: "{{local_jar_file}}"
+        dest: "{{temp_jar_path}}"
+        mode: 0777
+
+################################### Kill Running Application Processes #####################
+
+    - name: Fetch Application PID
+      tags: kill
+      shell: "ps -few | grep jar | grep {{ app_name }} | awk '{print $2}'"
+      register: running_processes
+
+    - name: Kill Running Processes
+      tags: kill
+      shell: "kill -9 {{running_processes.stdout.replace('\n', ' ')}}"
+      ignore_errors: True
+
+################################### Delete Old JAR #####################
+
+    - name: "Delete old JAR File if Exists"
+      tags: remove
+      file:
+        path: "{{ jar_path }}"
+        state: absent
+      when: check_jar.stat.exists | bool
+
+    - tags: rename
+      stat:
+        path: "{{temp_jar_path}}"
+      register: check_temp_jar
+
+    - name: "Rename Temp JAR to Original"
+      tags: rename
+      shell: "mv {{temp_jar_path}} {{jar_path}}"
+      when: check_temp_jar.stat.exists | bool
+
+################################### Execute Application Processes #####################
+
+    - name: "Start {{app_name}} Application"
+      tags: exec
+      shell: "nohup java -jar {{app_directory}}/{{app_name}}.jar > {{log_file_path}} 2>&1 &"
+      register: app_exec_result
+
+    - name: "Trace Log"
+      tags: trace
+      shell: "cat {{log_file_path}}"
