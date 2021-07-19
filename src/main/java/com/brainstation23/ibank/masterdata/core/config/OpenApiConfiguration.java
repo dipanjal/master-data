@@ -7,48 +7,56 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 /**
  * @author dipanjal
- * @since 2/13/2021
+ * @since 0.0.1
  */
+
 @Configuration
+@RequiredArgsConstructor
 public class OpenApiConfiguration {
 
-    private final String SECURITY_SCHEME_NAME = "BearerAuth";
+    private final Environment env;
+
+    private final String SECURITY_TYPE = "BearerAuth";
 
     @Bean
-    public OpenAPI customOpenAPI(@Value("${api.version}") final String apiVersion) {
+    public OpenAPI customOpenAPI() {
         return new OpenAPI()
-                .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
+                .addSecurityItem(new SecurityRequirement().addList(SECURITY_TYPE))
                 .components(getSecurityComponents())
-                .info(getApiInfo(apiVersion));
+                .info(getApiInfo());
     }
 
     private Components getSecurityComponents() {
         return new Components()
-                .addSecuritySchemes(SECURITY_SCHEME_NAME, new SecurityScheme()
+                .addSecuritySchemes(SECURITY_TYPE, new SecurityScheme()
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .bearerFormat("JWT"));
     }
 
-    private Info getApiInfo(final String apiVersion){
+    private Info getApiInfo(){
         return new Info()
-                .title("Master Data API")
-                .version(apiVersion)
-                .description("A RESTful API Service for Cardinity Project Management Application")
+                .title(env.getProperty("api.title"))
+                .version(env.getProperty("api.version"))
+                .description(env.getProperty("api.description"))
                 .contact(getContactInfo())
-                .termsOfService("http://swagger.io/terms/")
-                .license(new License().name("Apache 2.0").url("http://springdoc.org"));
+                .termsOfService(env.getProperty("api.tnc-url"))
+                .license(new License()
+                        .name(env.getProperty("api.license.name"))
+                        .url(env.getProperty("api.license.url")));
     }
 
     private Contact getContactInfo(){
         return new Contact()
-                .name("Brain Station 23")
-                .url("https://brainstation-23.com/");
+                .name(env.getProperty("api.contact.name"))
+                .email(env.getProperty("api.contact.email"))
+                .url(env.getProperty("api.contact.url"));
     }
 }

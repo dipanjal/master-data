@@ -7,10 +7,21 @@ spring:
   application:
     name: master-data
 
-api:
-  version: 0.0.1
-
 springdoc:
   paths-to-exclude:
     - /user/**
     - /dummy/**
+
+
+api:
+  version: 0.0.1
+  title: Master Data API
+  description: A RESTful API Service for Cardinity Project Management Application
+  contact:
+    name: Brain Station 23 LTD
+    email: brainstation23@test.com
+    url: https://brainstation-23.com/
+  tnc-url: http://swagger.io/terms/
+  license:
+    name: Apachee 2.0
+    url: http://springdoc.org
