@@ -1,0 +1,7 @@
+########## Deploy on Dev node 1 ###############
+
+ansible-playbook deployment/ansible/dev/deployment.yml -i deployment/ansible/dev/inventory.yml --extra-vars "backup=true host=dev1" -v
+
+########## Deploy on Dev node 2 ###############
+
+ansible-playbook deployment/ansible/dev/deployment.yml -i deployment/ansible/dev/inventory.yml --extra-vars "backup=true host=dev2" -v

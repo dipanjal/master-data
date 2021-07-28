@@ -1,0 +1,7 @@
+= The Intrepid Chronicles
+
+== test
+image::assets/Front-End_Mock.png[width=600,alt="Mock Server"]
+
+NOTE: sjdlasjdljsd
+

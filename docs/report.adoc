@@ -1,0 +1,124 @@
+
+= Reprot Generation
+
+Nazim Uddin Asif  <imnazimuddinasif@gmail.com>
+
+= What is Jasper Report?
+
+[abstract]
+JasperReports is an open-source reporting engine. It provides the ability to deliver rich content onto to the printer, the screen, or into various formats such as PDF, DOCX, XSLS, and CSV files. It is a Java library and can be used in a variety of Java-enabled applications to generate dynamic content. Its main purpose is to help create page-oriented, ready-to-print documents in a simple and flexible manner. JasperReports can also be used to provide reporting capabilities in our applications.
+
+= What is Apache POI?
+
+[abstract]
+Apache POI is a popular API that allows programmers to create, modify, and display MS Office files using Java programs. It is an open-source library developed and distributed by Apache Software Foundation to design or modify Microsoft Office files using Java program. It contains classes and methods to decode the user input data or a file into MS Office documents.
+
+= Why we build this library?
+
+[abstract]
+Jasper report and Apache Poi are great tools. But, still need to write lots of code for generating reports. The aim of this library is minimizing code and easy to use as user can build report quickly.
+
+== Features
+
+* [*] Generate report with any of .pdf, .xlsx, .csv, .docx formats just passing your customized format and values.
+* [*] You can set password protection of pdf format
+* [*] You can generate an Excel file where you can create any number of sheets just passing sheet name, list of header and list of data.
+
+= User need to know:
+
+. User need to know how to create template of jasper report. You can get help from here https://community.jaspersoft.com/wiki/creating-custom-template-jaspersoft-studio
+. User need to know How to Customized jasper template.
+
+
+= How to use?
+
+* First of all, user need to add following gradle dependencies.
+----
+implementation 'net.sf.jasperreports:jasperreports:6.16.0'
+implementation 'org.apache.poi:poi:5.0.0'
+implementation 'org.apache.poi:poi-ooxml:5.0.0'
+----
+then user is capable to use feature of this library
+
+* Classes need to be extended:
+** For pdf: `PdfReport`
+** For docx: `DocxReport`
+** For csv: `CsvReport`
+** For xlsx: `XlsxReport`
+
+
+= Feature 1:
+
+For using feature 1, user needs to follow following steps.
+
+* Create an Object of your wanted formatted class.
+Example: `PdfReportConfiguration pdfReportConfiguration = new PdfReportConfiguration();`
+* Set template to this object with location and name as a parameter by default it takes template from resource directory. Example: `pdfReportConfiguration.setTemplateName("jrxml formates/Employees.jrxml")`
+
+NOTE: Here, `jrxml formats` is the name of directory in resource directory and `Employees.jrxml` is a template name with extension.
+
+* Set name of your generated report. Example: `pdfReportConfiguration.setReportName("employee")`
+
+NOTE: Here, ‘employee” is the name of your generated report.
+
+* Finally, call the class `Report.***`.
+
+Example: `Report.generateDocx(data, docxReportConfiguration)`
+
+NOTE: Here, “data” is a map. It needs to be configured if user customized the template type must be <String, Object>. Otherwise, it is an empty map.
+
+---
+Full configuration looks like,
+----
+DocxReportConfiguration docxReportConfiguration = new DocxReportConfiguration();<1>
+docxReportConfiguration.setTemplateName("jrxml formates/Employees.jrxml");<2>
+docxReportConfiguration.setReportName("employee");<3>
+Map<String, Object> data = new HashMap<>();
+return Report.generateDocx(data, docxReportConfiguration);<4>
+----
+= Feature 2:
+
+For setting password in pdf, you need to follow first three steps of feature 1. Then follow a step.
+
+* After following first three step of feature 1, then Set password to the object. Example: `pdfReportConfiguration.setPassword("1234")`;
+
+= Feature 3
+
+Another facility of this library is, it can dynamically generate any number of sheets and fill the sheets with proper data. For this feature, you need to call following method
+
+`public static ResponseEntity<byte[]> generateXlsx( List<String> sheets, List<List<String>> headers, List<List<String>> allData, XlsxReportConfiguration reportConfiguration)`
+
+* parameters and there description
+[cols="1,2"]
+|===
+|Parameter |Description
+
+|`List<String> sheets`
+|Name of sheets
+
+|`List<List<String>> headers`
+|List of headers for per sheet
+
+|`List<List<String>> allData`
+|List of data for per sheet
+
+|`reportConfiguration`
+|configure the object
+|===
+
+* For `code demo` [[bb-ant]] https://github.com/nazim-asif/Report-Generation-in-spirng-boot-and-jaspar/blob/master/src/main/java/com/jasperreportusingjava/jasperrepot/service/BaseReportService.java[github]
+
+
+
+
+== Watch
+
+* Udemy - https://www.udemy.com/course/reporting-with-jasperreports-java-spring-boot-jasperstudio-jaspersoft/[Build Reports with JasperReports, Java and Spring Boot, window="_blank"]
+by Alfa e-learning.
+** Duration *3h*.
+
+[bibliography]
+== References
+
+* [[[bb-ant,1]]] https://www.jaspersoft.com/[Jasper Report]
+* [[[bb-ant,2]]] https://poi.apache.org/apidocs/[Apache Poi]
