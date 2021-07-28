@@ -33,17 +33,14 @@ jobs:
       run: ./gradlew build
 
     - name: Docker Build Master Data Image
-        run: |
-          docker build -t dipanjalmaitra/master-data:latest
+        run: docker build -t dipanjalmaitra/master-data:latest
     - name: Dockerhub Login
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+        run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     - name: Docker push
-      run: |
-        docker push dipanjalmaitra/master-data:latest
+      run: docker push dipanjalmaitra/master-data:latest
 
 #    - name: Build & push Docker image
 #      uses: mr-smithers-excellent/docker-build-push@v5
