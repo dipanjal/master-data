@@ -1,41 +1,20 @@
-version: '3'
+version: '3.9'
 services:
   master-data:
     build:
       context: .
     image: master-data:latest
-#    container_name: master_data_app
-#    restart: always
-#    environment:
-#      ACTIVE_PROFILE: $ACTIVE_PROFILE
-    env_file:
-      - ~/remittance/master-data-config.env
+    container_name: master_data_app
     ports:
       - 8100:8100
-#    volumes:
-#      - ~/remittance/master-data:/tmp
-#    command: >
-#      bash -c "java -jar application.jar -Dspring.profiles.active=${ACTIVE_PROFILE}"
-#    entrypoint:
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: '1.0'
-#          memory: 2000M
-#        reservations:
-#          cpus: '0.25'
-#          memory: 200M
-#      restart_policy:
-#        condition: on-failure
-#    healthcheck:
-#      test: "exit 0"
-#    cap_add:
-#      - ALL
-#    cap_drop:
-#      - NET_ADMIN
-#      - SYS_ADMIN
-
-#networks:
-#  default:
-#    external:
-#      name: backend
+    env_file:
+      - ~/remittance/master-data-config.env
+    volumes:
+      - ~/remittance/master-data:/tmp
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2000M
+      restart_policy:
+        condition: on-failure
